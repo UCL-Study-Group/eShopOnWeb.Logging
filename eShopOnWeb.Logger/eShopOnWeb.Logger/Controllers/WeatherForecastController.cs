@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Serilog;
 
 namespace eShopOnWeb.Logger.Controllers
 {
@@ -24,7 +25,13 @@ namespace eShopOnWeb.Logger.Controllers
     public IEnumerable<WeatherForecast> Get()
     {
 
-      _logger.LogWarning("Hello, test test, weather forecast!");
+      _logger.LogInformation("Hello, test test, weather forecast!");
+
+      Task.Delay(5000);
+
+      _logger.LogWarning("Oh no, a warning!");
+
+
       return Enumerable.Range(1, 5).Select(index => new WeatherForecast
       {
         Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
