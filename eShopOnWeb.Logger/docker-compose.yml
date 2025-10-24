@@ -1,5 +1,14 @@
 version: "3.7"
 services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"   
+      - "15672:15672" 
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+
   es01:
     image: "docker.elastic.co/elasticsearch/elasticsearch-oss:7.10.2"
     ports:
@@ -23,6 +32,7 @@ services:
       interval: 10s
       timeout: 10s
       retries: 120
+
   kibana:
     image: docker.elastic.co/kibana/kibana-oss:7.10.2
     depends_on:
@@ -32,5 +42,6 @@ services:
       - "5601:5601"
     environment:
       - 'ELASTICSEARCH_HOSTS=["http://es01:9200"]'
+
 volumes:
   es-data-es01:
