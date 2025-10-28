@@ -8,8 +8,7 @@ var builder = Host.CreateApplicationBuilder(args);
 //Add services
 builder.Services.AddScoped<MessageHandler>();
 
-builder.Services.AddHostedService<DLXWorker>();
-builder.Services.AddHostedService<InvalidMessageWorker>();
+
 builder.Services.AddHostedService<RabbitMqSetup>();
 
 var host = builder.Build();
@@ -22,7 +21,7 @@ var serviceName = builder.Configuration["ElasticsearchConfiguration:ServiceName"
 //Serilog-configuration
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
-    .WriteTo.Elasticsearch(new[] { new Uri("http://localhost:9200") }, opts =>
+    .WriteTo.Elasticsearch(new[] { new Uri(elasticUri ?? "http://localhost:9200") }, opts =>
     {
       // logs i ElasticSearch
       opts.DataStream = new DataStreamName("logs", serviceName.ToLower());
