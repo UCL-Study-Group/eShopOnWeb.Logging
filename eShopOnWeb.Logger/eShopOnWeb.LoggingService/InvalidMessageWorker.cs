@@ -18,6 +18,6 @@ namespace eShopOnWeb.LoggingService
             throw new NotImplementedException();
         }
 
-       
+
     }
 }

@@ -16,7 +16,7 @@ var host = builder.Build();
 
 //Values from configuration (appsettings.json)
 var elasticUri = builder.Configuration["ElasticsearchConfiguration:Uri"];
-var serviceName = builder.Configuration["ElasticsearchConfiguration:ServiceName"] ?? "loggingservice";
+var serviceName = builder.Configuration["ElasticsearchConfiguration:ServiceName"] ?? "LoggingService";
 
 
 //Serilog-configuration
@@ -27,7 +27,7 @@ Log.Logger = new LoggerConfiguration()
       // logs i ElasticSearch
       opts.DataStream = new DataStreamName("logs", serviceName.ToLower());
     })
-    .MinimumLevel.Information()  // Don't log Debug messages (reduce noise)
+    .MinimumLevel.Information()  //så logger vi ikke debugs
     .CreateLogger();
 
 //brug serilog
