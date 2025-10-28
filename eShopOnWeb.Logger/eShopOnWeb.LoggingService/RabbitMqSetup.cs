@@ -1,10 +1,6 @@
 ﻿using RabbitMQ.Client;
-using System.Threading.Channels;
 using UCL.RabbitMQ.Core;
 using UCL.RabbitMQ.Core.Records;
-
-
-
 namespace eShopOnWeb.LoggingService
 {
   public class RabbitMqSetup : RabbitServiceBase, IHostedService
@@ -20,11 +16,7 @@ namespace eShopOnWeb.LoggingService
     const string ManualInspectionQ = "logging.manual_inspections.queue";
 
 
-
     private readonly ILogger<RabbitMqSetup> _logger;
-
-    private IConnection _connection;
-    private IChannel _channel;
 
     public RabbitMqSetup(ILogger<RabbitMqSetup> logger, string? hostName = null, string? userName = null, string? password = null) : base(hostName, userName, password)
     {
@@ -67,12 +59,9 @@ namespace eShopOnWeb.LoggingService
 
     }
 
-    public async Task StopAsync(CancellationToken cancellationToken)
+    public Task StopAsync(CancellationToken cancellationToken)
     {
-      await _channel.CloseAsync();
-      await _connection.CloseAsync();
-      await _channel.DisposeAsync();
-      await _connection.DisposeAsync();
+      return Task.CompletedTask;
     }
 
 
