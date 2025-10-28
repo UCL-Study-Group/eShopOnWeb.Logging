@@ -1,4 +1,6 @@
-﻿using eShopOnWeb.LoggingService.Models;
+﻿using eShopOnWeb.LoggingService.Helpers;
+using eShopOnWeb.LoggingService.Models;
+using eShopOnWeb.LoggingService.Setup;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +10,7 @@ using UCL.RabbitMQ.Core;
 using UCL.RabbitMQ.Core.Records;
 
 
-namespace eShopOnWeb.LoggingService
+namespace eShopOnWeb.LoggingService.Workers
 {
   public class InvalidMessageWorker : BackgroundService
   {

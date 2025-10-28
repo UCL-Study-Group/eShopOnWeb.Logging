@@ -1,12 +1,9 @@
-using eShopOnWeb.LoggingService;
 using Serilog;
 using Elastic.Serilog.Sinks;
 using Elastic.Ingest.Elasticsearch.DataStreams;
+using eShopOnWeb.LoggingService.Setup;
 
 var builder = Host.CreateApplicationBuilder(args);
-
-//Add services
-builder.Services.AddScoped<MessageHandler>();
 
 
 builder.Services.AddHostedService<RabbitMqSetup>();

@@ -1,7 +1,7 @@
 ﻿using RabbitMQ.Client;
 using UCL.RabbitMQ.Core;
 using UCL.RabbitMQ.Core.Records;
-namespace eShopOnWeb.LoggingService
+namespace eShopOnWeb.LoggingService.Setup
 {
   public class RabbitMqSetup : RabbitServiceBase, IHostedService
   {

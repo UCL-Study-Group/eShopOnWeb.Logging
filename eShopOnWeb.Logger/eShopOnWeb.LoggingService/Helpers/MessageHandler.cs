@@ -1,7 +1,7 @@
 ﻿using System.Text;
 using System.Text.Json;
 
-namespace eShopOnWeb.LoggingService
+namespace eShopOnWeb.LoggingService.Helpers
 {
   /// <summary>
   /// Helper to unpack messages received from other services
