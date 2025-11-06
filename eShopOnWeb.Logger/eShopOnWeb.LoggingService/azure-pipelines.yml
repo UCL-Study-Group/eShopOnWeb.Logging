@@ -4,6 +4,7 @@
 
 trigger:
   - main
+  - setup 
 
 pool:
   name: 'Self Hosted'
