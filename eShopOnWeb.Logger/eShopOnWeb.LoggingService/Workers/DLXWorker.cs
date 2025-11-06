@@ -1,4 +1,5 @@
 using eShopOnWeb.LoggingService.Setup;
+using UCL.RabbitMQ.Core.Records;
 
 namespace eShopOnWeb.LoggingService.Workers
 {
@@ -6,6 +7,8 @@ namespace eShopOnWeb.LoggingService.Workers
   {
     private readonly ILogger<DLXWorker> _logger;
     private readonly RabbitMqSetup _setup;
+
+    const string DLQ = "logging.dead_letters.queue";
 
     public DLXWorker(ILogger<DLXWorker> logger, RabbitMqSetup setup)
     {
@@ -15,15 +18,29 @@ namespace eShopOnWeb.LoggingService.Workers
 
     public override async Task StartAsync(CancellationToken cancellationToken)
     {
-      _logger.LogInformation("RabbitMQ worker starting");
 
       await base.StartAsync(cancellationToken);
     }
 
-                  
-    protected override Task ExecuteAsync(CancellationToken stoppingToken)
+
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-      throw new NotImplementedException();
+      try
+      {
+        _logger.LogInformation("Starting RabbitMQ setup...");
+        await _setup.StartAsync(stoppingToken);
+        _logger.LogInformation("RabbitMQ setup is ready!");
+      }
+      catch (Exception ex)
+      {
+        _logger.LogCritical(ex, "Something went wrong when setting up RabbitMQ. Worker is not able to start");
+      }
+
+      var subscription = await _setup.SubscribeAsync(new SubscribeConfig
+     (QueueName: DLQ,
+     AutoAck: false,
+     PrefetchCount: 1));
+
     }
   }
 }

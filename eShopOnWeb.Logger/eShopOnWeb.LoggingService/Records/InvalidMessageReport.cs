@@ -8,8 +8,8 @@ namespace eShopOnWeb.LoggingService.Models
 {
   public record InvalidMessageReport
   {
-    public string? ReportingService { get; init; } //e.g. catalogservice
-    public string? ErrorMessage { get; init; }
+    public required string ReportingService { get; init; } //e.g. catalogservice
+    public required string ErrorMessage { get; init; }
     public string? OriginalMessageBody { get; init; } //the whole body from the received message
   }
 

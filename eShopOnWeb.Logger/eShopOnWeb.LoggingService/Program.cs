@@ -2,11 +2,19 @@ using Serilog;
 using Elastic.Serilog.Sinks;
 using Elastic.Ingest.Elasticsearch.DataStreams;
 using eShopOnWeb.LoggingService.Setup;
+using eShopOnWeb.LoggingService.Workers;
 
 var builder = Host.CreateApplicationBuilder(args);
 
 
-builder.Services.AddHostedService<RabbitMqSetup>();
+builder.Services.AddSingleton<RabbitMqSetup>();
+
+builder.Services.AddHostedService<InvalidMessageWorker>();
+
+//builder.Services.AddHostedService<DLXWorker>();
+
+//brug serilog
+builder.Services.AddSerilog();
 
 var host = builder.Build();
 
@@ -26,7 +34,5 @@ Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Information()  //så logger vi ikke debugs
     .CreateLogger();
 
-//brug serilog
-builder.Services.AddSerilog();
 
 await host.RunAsync();

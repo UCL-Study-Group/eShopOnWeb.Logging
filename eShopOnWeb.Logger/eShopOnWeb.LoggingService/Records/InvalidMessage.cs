@@ -11,12 +11,12 @@ namespace eShopOnWeb.LoggingService.Models
       DateTime Timestamp,
       string LogLevel,
       string? CorrelationId,      // fromm header
-      string ReportingService,    // from report (sent from other services) [...]
-      string ErrorMessage,        
-      string OriginalMessageBody  
+      string ReportingService,    // Where is the report from?
+      string ErrorMessage,        //Whats the error message?
+      string OriginalMessageBody  //the message body
   )
   {
-    
+
     public string ToJson() => JsonSerializer.Serialize(this);
   }
 }

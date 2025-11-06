@@ -3,7 +3,7 @@ using UCL.RabbitMQ.Core;
 using UCL.RabbitMQ.Core.Records;
 namespace eShopOnWeb.LoggingService.Setup
 {
-  public class RabbitMqSetup : RabbitServiceBase, IHostedService
+  public class RabbitMqSetup : RabbitServiceBase
   {
     //Exchanges
     const string InvalidMessagesX = "invalid_messages.exchange";

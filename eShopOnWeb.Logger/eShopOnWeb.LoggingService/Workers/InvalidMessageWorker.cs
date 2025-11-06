@@ -19,7 +19,6 @@ namespace eShopOnWeb.LoggingService.Workers
 
 
     private const string InvalidMessageQ = "logging.invalid_messages.queue";
-    private const string InvalidMessagesX = "invalid_messages.exchange";
 
     public InvalidMessageWorker(ILogger<InvalidMessageWorker> logger, RabbitMqSetup setup)
     {
@@ -29,13 +28,23 @@ namespace eShopOnWeb.LoggingService.Workers
 
     public override async Task StartAsync(CancellationToken cancellationToken)
     {
-      _logger.LogInformation("RabbitMQ worker starting");
 
       await base.StartAsync(cancellationToken);
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
+      try
+      {
+        _logger.LogInformation("Starting RabbitMQ setup...");
+        await _setup.StartAsync(stoppingToken);
+        _logger.LogInformation("RabbitMQ setup is ready!");
+      }
+      catch (Exception ex)
+      {
+        _logger.LogCritical(ex, "Something went wrong when setting up RabbitMQ. Worker is not able to start");
+      }
+
       var subscription = await _setup.SubscribeAsync(new SubscribeConfig
       (QueueName: InvalidMessageQ,
       AutoAck: false,
@@ -45,7 +54,7 @@ namespace eShopOnWeb.LoggingService.Workers
       {
         try
         {
-          //Try to fetch correlationId
+          //Try to fetch correlationId, but should always be set 
           string? correlationId = null;
           if (ea.BasicProperties.Headers is not null &&
               ea.BasicProperties.Headers.TryGetValue("CorrelationId", out var correlationIdObj))
@@ -57,7 +66,8 @@ namespace eShopOnWeb.LoggingService.Workers
 
           if (report == null)
           {
-            _logger.LogWarning("CorrelationID ({CorrelationId}): Corrupt report received on {Queue}. Message will be Nack'ed.", ea.BasicProperties.CorrelationId, InvalidMessageQ);
+            _logger.LogWarning("CorrelationID ({CorrelationId}): Corrupt report received on {Queue}. Message will be Nack'ed.",
+            correlationId, InvalidMessageQ);
             await subscription.Channel.BasicNackAsync(ea.DeliveryTag, false, false);
             return;
           }
@@ -68,7 +78,7 @@ namespace eShopOnWeb.LoggingService.Workers
             CorrelationId: correlationId,
             ReportingService: report.ReportingService ?? "Uknown",
             ErrorMessage: report.ErrorMessage ?? "Uknown",
-            OriginalMessageBody: report.OriginalMessageBody);
+            OriginalMessageBody: report.OriginalMessageBody ?? "Uknown");
 
           _logger.LogWarning("Invalid message reported: {JsonLog}", logEntry.ToJson());
 

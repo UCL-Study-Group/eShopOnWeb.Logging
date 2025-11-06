@@ -19,9 +19,14 @@ namespace eShopOnWeb.LoggingService.Helpers
     {
       try
       {
+        var jsonOptions = new JsonSerializerOptions
+        {
+          PropertyNameCaseInsensitive = true
+        };
+
         string jsonString = Encoding.UTF8.GetString(body.Span);
 
-        return JsonSerializer.Deserialize<T>(jsonString);
+        return JsonSerializer.Deserialize<T>(jsonString, jsonOptions);
       }
       catch (JsonException ex)
       {
