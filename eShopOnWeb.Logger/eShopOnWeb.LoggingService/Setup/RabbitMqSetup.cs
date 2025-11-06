@@ -6,14 +6,14 @@ namespace eShopOnWeb.LoggingService.Setup
   public class RabbitMqSetup : RabbitServiceBase
   {
     //Exchanges
-    const string InvalidMessagesX = "invalid_messages.exchange";
-    const string DLX = "dead_letter.exchange";
-    const string ManualInspectionX = "manual_inspections.exchange";
+     const string InvalidMessagesX = "invalid_messages.exchange";
+     const string DLX = "dead_letter.exchange";
+     const string ManualInspectionX = "manual_inspections.exchange";
 
     //Queues
-    const string InvalidMessageQ = "logging.invalid_messages.queue";
-    const string DLQ = "logging.dead_letters.queue";
-    const string ManualInspectionQ = "logging.manual_inspections.queue";
+     const string InvalidMessageQ = "logging.invalid_messages.queue";
+     const string DLQ = "logging.dead_letters.queue";
+     const string ManualInspectionQ = "logging.manual_inspections.queue";
 
 
     private readonly ILogger<RabbitMqSetup> _logger;

@@ -20,6 +20,8 @@ namespace eShopOnWeb.LoggingService.Workers
 
     private const string InvalidMessageQ = "logging.invalid_messages.queue";
 
+    private const string ManualInspectionExchange = "manual_inspections.exchange";
+
     public InvalidMessageWorker(ILogger<InvalidMessageWorker> logger, RabbitMqSetup setup)
     {
       _logger = logger;
@@ -56,6 +58,7 @@ namespace eShopOnWeb.LoggingService.Workers
         {
           //Try to fetch correlationId, but should always be set 
           string? correlationId = null;
+
           if (ea.BasicProperties.Headers is not null &&
               ea.BasicProperties.Headers.TryGetValue("CorrelationId", out var correlationIdObj))
           {
@@ -64,11 +67,31 @@ namespace eShopOnWeb.LoggingService.Workers
 
           InvalidMessageReport? report = MessageHandler.TryUnpack<InvalidMessageReport>(ea.Body, _logger);
 
+          //If a report is not available (not serializable), it'll be sent to a manual inspection queue with no consumers for manual inspection (e.g. by admin)
           if (report == null)
           {
-            _logger.LogWarning("CorrelationID ({CorrelationId}): Corrupt report received on {Queue}. Message will be Nack'ed.",
-            correlationId, InvalidMessageQ);
-            await subscription.Channel.BasicNackAsync(ea.DeliveryTag, false, false);
+            try
+            {
+              _logger.LogWarning("CorrelationID ({CorrelationId}): Corrupt report received on {Queue}. Will publish to {ManualInspectionX}", correlationId, InvalidMessageQ, ManualInspectionExchange);
+
+              var publishConfig = new PublishConfig(
+                              Exchange: ManualInspectionExchange,
+                              routingKey: "manual.inspection.corrupt_report",
+                              body: ea.Body.ToArray(),
+                              properties: ea.BasicProperties.ConvertToBasicProperties());
+
+              await _setup.PublishAsync(publishConfig);
+              _logger.LogInformation("CorrelationID ({CorrelationId}): Corrupt report sent to {ManualInspectionX} with routing key: {RoutingKey}",
+                                      correlationId,
+                                      ManualInspectionExchange,
+                                      publishConfig.routingKey);
+            }
+            catch (Exception e)
+            {
+              _logger.LogError(e, "CorrelationID ({CorrelationId}): Failed to forward corrupt message to manual inspection. Message will be Nack'ed...", correlationId);
+              await subscription.Channel.BasicNackAsync(ea.DeliveryTag, false, false);
+            }
+
             return;
           }
 
@@ -76,8 +99,8 @@ namespace eShopOnWeb.LoggingService.Workers
             Timestamp: DateTime.UtcNow,
             LogLevel: "Warning",
             CorrelationId: correlationId,
-            ReportingService: report.ReportingService ?? "Uknown",
-            ErrorMessage: report.ErrorMessage ?? "Uknown",
+            ReportingService: report.ReportingService,
+            ErrorMessage: report.ErrorMessage,
             OriginalMessageBody: report.OriginalMessageBody ?? "Uknown");
 
           _logger.LogWarning("Invalid message reported: {JsonLog}", logEntry.ToJson());
