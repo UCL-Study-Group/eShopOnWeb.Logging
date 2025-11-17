@@ -2,5 +2,5 @@
   <Folder Name="/Solution Items/">
     <File Path="docker-compose.yml" />
   </Folder>
-  <Project Path="eShopOnWeb.LoggingService/eShopOnWeb.LoggingService.csproj" Id="5316cd0f-bda0-4185-b33a-ec741af7e652" />
+  <Project Path="eShopOnWeb.Logger\eShopOnWeb.LoggingService\eShopOnWeb.LoggingService.csproj" />
 </Solution>
