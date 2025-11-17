@@ -1,5 +1,10 @@
 version: "3.7"
 services:
+  logging.service:
+    image: ${DOCKER_REGISTRY-}logging
+    build:
+      context: .
+      dockerfile: eShopOnWeb.Logging\eShopOnWeb.Logger\eShopOnWeb.LoggingService
   rabbitmq:
     image: rabbitmq:4-management
     ports:
