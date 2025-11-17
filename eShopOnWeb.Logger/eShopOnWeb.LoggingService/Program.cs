@@ -11,7 +11,7 @@ builder.Services.AddSingleton<RabbitMqSetup>();
 
 builder.Services.AddHostedService<InvalidMessageWorker>();
 
-//builder.Services.AddHostedService<DLXWorker>();
+builder.Services.AddHostedService<DeadLetterWorker>();
 
 //brug serilog
 builder.Services.AddSerilog();

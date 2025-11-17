@@ -68,7 +68,7 @@ namespace eShopOnWeb.LoggingService.Workers
           InvalidMessageReport? report = MessageHandler.TryUnpack<InvalidMessageReport>(ea.Body, _logger);
 
           //If a report is not available (not serializable), it'll be sent to a manual inspection queue with no consumers for manual inspection (e.g. by admin)
-          if (report == null)
+          if (report is null)
           {
             try
             {
@@ -85,6 +85,8 @@ namespace eShopOnWeb.LoggingService.Workers
                                       correlationId,
                                       ManualInspectionExchange,
                                       publishConfig.routingKey);
+
+              //await Task.Delay(Timeout.Infinite, stoppingToken);
             }
             catch (Exception e)
             {
@@ -106,6 +108,8 @@ namespace eShopOnWeb.LoggingService.Workers
           _logger.LogWarning("Invalid message reported: {JsonLog}", logEntry.ToJson());
 
           await subscription.Channel.BasicAckAsync(ea.DeliveryTag, false);
+
+          await Task.Delay(Timeout.Infinite, stoppingToken);
 
         }
         catch (Exception ex)
