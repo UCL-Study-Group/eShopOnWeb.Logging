@@ -99,7 +99,7 @@ namespace eShopOnWeb.LoggingService.Workers
 
           var logEntry = new InvalidMessageLogEntry(
             Timestamp: DateTime.UtcNow,
-            LogLevel: "Warning",
+            LogLevel: "Error",
             CorrelationId: correlationId,
             ReportingService: report.ReportingService,
             ErrorMessage: report.ErrorMessage,
