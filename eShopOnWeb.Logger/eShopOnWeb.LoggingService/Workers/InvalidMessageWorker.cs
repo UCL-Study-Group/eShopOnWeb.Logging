@@ -86,7 +86,7 @@ namespace eShopOnWeb.LoggingService.Workers
                                       ManualInspectionExchange,
                                       publishConfig.routingKey);
 
-              //await Task.Delay(Timeout.Infinite, stoppingToken);
+              await Task.Delay(Timeout.Infinite, stoppingToken);
             }
             catch (Exception e)
             {
