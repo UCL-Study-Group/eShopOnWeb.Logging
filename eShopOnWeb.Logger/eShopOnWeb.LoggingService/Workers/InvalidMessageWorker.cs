@@ -105,7 +105,7 @@ namespace eShopOnWeb.LoggingService.Workers
             ErrorMessage: report.ErrorMessage,
             OriginalMessageBody: report.OriginalMessageBody ?? "Uknown");
 
-          _logger.LogWarning("Invalid message reported: {JsonLog}", logEntry.ToJson());
+          _logger.LogWarning("Invalid message reported: {@JsonLog}", logEntry);
 
           await subscription.Channel.BasicAckAsync(ea.DeliveryTag, false);
 
