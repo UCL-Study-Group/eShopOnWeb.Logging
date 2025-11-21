@@ -99,13 +99,13 @@ namespace eShopOnWeb.LoggingService.Workers
 
           var logEntry = new InvalidMessageLogEntry(
             Timestamp: DateTime.UtcNow,
-            LogLevel: "Warning",
+            LogLevel: "Error",
             CorrelationId: correlationId,
             ReportingService: report.ReportingService,
             ErrorMessage: report.ErrorMessage,
             OriginalMessageBody: report.OriginalMessageBody ?? "Uknown");
 
-          _logger.LogWarning("Invalid message reported: {JsonLog}", logEntry.ToJson());
+          _logger.LogWarning("Invalid message reported: {@JsonLog}", logEntry);
 
           await subscription.Channel.BasicAckAsync(ea.DeliveryTag, false);
 

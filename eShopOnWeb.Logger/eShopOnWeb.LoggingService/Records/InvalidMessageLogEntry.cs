@@ -14,9 +14,6 @@ namespace eShopOnWeb.LoggingService.Models
       string ReportingService,    // Where is the report from?
       string ErrorMessage,        //Whats the error message?
       string OriginalMessageBody  //the message body
-  )
-  {
-
-    public string ToJson() => JsonSerializer.Serialize(this);
-  }
+  );
+  
 }
